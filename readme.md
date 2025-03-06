@@ -4,11 +4,16 @@
   - Api Gateway
     - nat
   - Core Service
+    
     - User Service
       - database : mysql
+  
     - Subscription Service
+    
     - Billing Service
+    
     - Payment Service
+    
     - Notification Service
 
 # Technology Stack
