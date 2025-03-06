@@ -1,15 +1,32 @@
 services:
+  api_gateway:
+    container_name: api-gateway-service
+    build: ./api-gateway
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./api-gateway/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=3000
+
+  nats:
+    container_name: nats-server
+    image: nats
+    ports:
+      - "4222:4222"
+
+  #### user micro service
   user_service_api:
     container_name: user-service-container
     build:
       context: ./user
       dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
     depends_on:
       - db_user_service
     volumes:
       - ./user/src:/usr/src/app/src
+
   db_user_service:
     container_name: user-service-db
     image: mysql
