@@ -1,22 +1,15 @@
--- 
-- Saas Billing Microservice
-# Services
-  - Api Gateway
-    - nat
-  - Core Service
-    
-    - User Service
-      - database : mysql
-  
-    - Subscription Service
-    
-    - Billing Service
-    
-    - Payment Service
-    
-    - Notification Service
+# Saas Billing Microservice
+    - Services
+        - Api Gateway
+        - Core Service
+        - User Service
+          - database : mysql
+        - Subscription Service
+        - Billing Service
+        - Payment Service
+        - Notification Service
 
-# Technology Stack
+## Technology Stack
     - Backend: NestJS
     - Database: PostgreSQL | MySQl | MongoDB
     - Caching: Redis
@@ -24,4 +17,9 @@
     - Monitoring
     - Containerization: Docker
     - Deployment: Kubernetes
-    - CI/CD
+    - CI/CD\
+
+
+```shell
+    docker-compose up --build -d
+```
