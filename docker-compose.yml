@@ -1,22 +1,22 @@
 services:
   user_service_api:
+    container_name: user-service-container
     build:
       context: ./user
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    container_name: user-service-container
     depends_on:
       - db_user_service
     volumes:
       - ./user/src:/usr/src/app/src
   db_user_service:
+    container_name: user-service-db
     image: mysql
     ports:
       - '3307:3307'
     env_file:
-      #      - ./user/.env
-      - .env
+      - ./user/.env
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DATABASE}

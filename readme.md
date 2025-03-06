@@ -2,8 +2,10 @@
 - Saas Billing Microservice
 # Services
   - Api Gateway
+    - nat
   - Core Service
     - User Service
+      - database : mysql
     - Subscription Service
     - Billing Service
     - Payment Service
