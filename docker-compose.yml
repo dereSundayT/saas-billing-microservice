@@ -1,5 +1,12 @@
 services:
-  api_gateway:
+  nats:
+    container_name: nats-server
+    image: nats
+    ports:
+      - "4222:4222"
+
+  # 1.API Gateway service
+  api_gateway_service:
     container_name: api-gateway-service
     build: ./api-gateway
     ports:
@@ -10,24 +17,66 @@ services:
     environment:
       - PORT=3000
 
-  nats:
-    container_name: nats-server
-    image: nats
+  # 2. Billing Service
+  billing_service:
+    container_name: billing-service
+    build:
+      context: ./billing
+      dockerfile: Dockerfile
     ports:
-      - "4222:4222"
+      - "3001:3000"
+    volumes:
+      - ./billing/src:/usr/src/app/src
+    command: npm run start:dev
 
-  #### user micro service
-  user_service_api:
-    container_name: user-service-container
+  # 3. Notification Service
+  notification_service:
+    container_name: notification-service
+    build:
+      context: ./notification
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3000"
+    volumes:
+      - ./notification/src:/usr/src/app/src
+    command: npm run start:dev
+
+  # 4. Payment Service
+  payment_service:
+    container_name: payment-service
+    build:
+      context: ./payment
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3000"
+    volumes:
+      - ./payment/src:/usr/src/app/src
+    command: npm run start:dev
+
+  # 5. Subscription Service
+  subscription_service:
+    container_name: subscription-service
+    build:
+      context: ./subscription
+      dockerfile: Dockerfile
+    ports:
+      - "3004:3000"
+    volumes:
+      - ./subscription/src:/usr/src/app/src
+    command: npm run start:dev
+
+  # 6.User Service
+  user_service:
+    container_name: user-service
     build:
       context: ./user
       dockerfile: Dockerfile
     depends_on:
-      - db_user_service
+      - user_service_db
     volumes:
       - ./user/src:/usr/src/app/src
 
-  db_user_service:
+  user_service_db:
     container_name: user-service-db
     image: mysql
     ports:
@@ -40,3 +89,7 @@ services:
       - MYSQL_USER=${MYSQL_USERNAME}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_TCP_PORT=3307
+
+
+
+
