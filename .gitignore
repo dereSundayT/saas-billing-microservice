@@ -1,3 +1,6 @@
 _planning
 .idea
 .env
+
+db
+.DS_Store

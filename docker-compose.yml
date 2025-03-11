@@ -5,6 +5,18 @@ services:
     ports:
       - "4222:4222"
 
+  rabbit-mq:
+    container_name: rabbitMq
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    volumes:
+      - /var/lib/rabbitmq
+    ports:
+      - '5672:5672' # server
+      - '15672:15672' # gui
+    env_file:
+      - .env
+
   # 1.API Gateway service
   api_gateway_service:
     container_name: api-gateway-service
@@ -42,7 +54,27 @@ services:
     command: npm run start:dev
 
   # 4. Payment Service
-  payment_service:
+  payment-service-db:
+    container_name: payment-service-db
+    image: postgres
+    env_file:
+      - ./payment/.env
+    ports:
+      - '5430:5432'
+    volumes:
+      - ./db/data:/var/lib/postgresql/data  #how to make data persist after docker restarts
+
+  payment-service-db-gui:
+    container_name: payment-service-db-gui
+    image: dpage/pgadmin4
+    depends_on:
+      - payment-service-db
+    env_file:
+      - ./payment/.env
+    ports:
+      - '15432:80'
+
+  payment-service:
     container_name: payment-service
     build:
       context: ./payment
@@ -66,6 +98,23 @@ services:
     command: npm run start:dev
 
   # 6.User Service
+  user_service_db:
+    container_name: user-service-db
+    image: mysql
+    ports:
+      - '3307:3307'
+    env_file:
+      - ./user/.env
+
+  user_service_db_admin_panel:
+    container_name: user_service_db_admin_panel
+    image: phpmyadmin
+    restart: always
+    env_file:
+      - ./user/.env
+    ports:
+      - "8080:80"
+
   user_service:
     container_name: user-service
     build:
@@ -76,19 +125,7 @@ services:
     volumes:
       - ./user/src:/usr/src/app/src
 
-  user_service_db:
-    container_name: user-service-db
-    image: mysql
-    ports:
-      - '3307:3307'
-    env_file:
-      - ./user/.env
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USERNAME}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_TCP_PORT=3307
+
 
 
 
